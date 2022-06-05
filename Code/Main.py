@@ -42,6 +42,7 @@ def login():
 
 #Switch statement based on user permissions
 def switch():
+
     while userType != '0':
         if userType == '0':
                print('\nGood Bye')

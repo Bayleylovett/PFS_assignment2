@@ -1,35 +1,39 @@
-def userSwitch():
-    i = 10
-    while i != '0':
-        i = input('\nWhat would you like to do\n'
-                      '0: Break\n'
-                      '1: Create a list\n'
-                      '2: Print the list\n'
-                      '3: Find a movie\n'
-                      '4: Rate a movie\n'
-                      '5: Order the movies based on rating\n'
-                      'Please enter your choice: ')
+import mysql.connector
+from mysql.connector import Error
+mydb = mysql.connector.connect(
+  host="seitux2.adfa.unsw.edu.au",
+  user="z5317512",
+  password="mysqlpass",
+  database="z5317512",
+  ssl_disabled=True,
+)
+mycursor = mydb.cursor()
 
-        if i == '0':
-            print('\nGood bye')
-        elif i == '1':
+def searchID():
+    searchItemID = int(input("Insert the ID of the item you would like to find: "))
+    mycursor.execute("""SELECT DISTINCT a.iName, a.category, a.company, a.price, b.quantity, c.wName FROM items a, warehouseStock b, warehouses c WHERE a.ID='%s' AND b.iID=a.ID AND c.ID=b.wID""" % searchItemID)
+    myresult = mycursor.fetchall()
+    for x in myresult:
+      print("Item Name:", x[0], "Category:", x[1], "Company:", x[2], "Price:", x[3], "Quantity:", x[4], "Warehouse Name:", x[5])
 
-        elif i == '2':
 
-        elif i == '3':
 
-        elif i == '4':
-            try:
-                rateMovie(input('\nEnter the movie you would like to rate:'), int(input('\nEnter the rating out of 1-10: ')))
-            except:
-                print('Incorrect input entered')
-        elif i == '5':
-            orderMovies()
-        else:
-            print('\nEnter a value between 0-5')
+
+def searchCompany():
+    searchItemCompany = input("Insert the company of the item you would like to find: ")
+    mycursor.execute("""SELECT DISTINCT a.iName, a.category, a.company, a.price, b.quantity, c.wName FROM items a, warehouseStock b, warehouses c WHERE a.company='%s' AND b.iID=a.ID AND c.ID=b.wID""" % searchItemCompany)
+    myresult = mycursor.fetchall()
+    for x in myresult:
+      print("Item Name:", x[0], "Category:", x[1], "Company:", x[2], "Price:", x[3], "Quantity:", x[4], "Warehouse Name:", x[5])
+
+# def searchCategory():
+
+# def moveItems():
+
+# def destroyItems():
+
 
 
 if __name__ == '__main__':
-    print("Hi")
-
-
+    # searchID()
+    searchCompany()

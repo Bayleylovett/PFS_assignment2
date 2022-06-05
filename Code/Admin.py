@@ -1,4 +1,4 @@
-def userSwitch():
+def adminSwitch():
     # do something
 
 

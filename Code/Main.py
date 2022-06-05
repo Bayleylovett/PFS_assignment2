@@ -6,7 +6,11 @@ global type
 
 
 def login():
-    userID = input('\nEnter your user identification number:')
+    try:
+        userID = int(input('\nEnter your user identification number:'))
+    except:
+        print('\nIncorrect Input!')
+
     password = input('\nEnter your password:')
 
     #insert select satement and then get type

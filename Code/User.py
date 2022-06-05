@@ -107,7 +107,8 @@ def moveItems(moveItemsUserID):
 
 # def destroyItems():
 
-
+def userSwitch():
+    print('\nDo Stuff')
 
 if __name__ == '__main__':
     # searchID()

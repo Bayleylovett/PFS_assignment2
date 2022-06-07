@@ -32,7 +32,7 @@ def login():
         password = input('\nEnter your password:')
         #gets the stored password and SALT from the users data in the users table
         sqlstmt = "SELECT password, salt FROM users WHERE userID = %s;"
-        mycursor.execute(sqlstmt, userID)
+        mycursor.execute("""SELECT password, salt FROM users WHERE userID='%s'""" % userID)
         saltAndKey = mycursor.fetchall()
         hash_User_password_Verify = saltAndKey[0]
         SALT = saltAndKey[1]

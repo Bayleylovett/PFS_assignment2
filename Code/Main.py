@@ -2,7 +2,7 @@ import secrets
 import mysql.connector
 from mysql.connector import Error
 import ast
-import hashlib
+import bcrypt
 from User import userSwitch
 from Admin import adminSwitch
 
@@ -30,22 +30,14 @@ def login():
             userID = None
 
         password = input('\nEnter your password:')
+        password = "b'" + password
         #gets the stored password and SALT from the users data in the users table
         sqlstmt = "SELECT password, salt FROM users WHERE userID = %s;"
         mycursor.execute("""SELECT password FROM users WHERE userID='%s'""" % userID)
         hash_User_password_Verify = mycursor.fetchone()
 
-        mycursor.execute("""SELECT salt FROM users WHERE userID='%s'""" % userID)
-        SALT = mycursor.fetchone()
-
-        #uses the stored SALT to generate a hash from the inputted password
-        hash_User_password = hashlib.pbkdf2_hmac('sha256', password.encode(), SALT, 4096)
-
-        hash_User_password_Verify = bytes.fromhex(str(hash_User_password_Verify))
-        SALT = bytes.fromhex(str(SALT))
-
         #compares the stored hashed value to the inputted hash value
-        if secrets.compare_digest(hash_User_password, hash_User_password_Verify):
+        if bcrypt.hashpw(password, hash_User_password_Verify) == hash_User_password_Verify:
             print("Password is good continuing log in")
         else:
             print("Password is incorrect, terminating log in attempt")

@@ -1,8 +1,7 @@
 import mysql.connector
 from mysql.connector import Error
 import random
-import hashlib
-import secrets
+import bcrypt
 mydb = mysql.connector.connect(
   host="seitux2.adfa.unsw.edu.au",
   user="z5317512",
@@ -13,7 +12,7 @@ mydb = mysql.connector.connect(
 mycursor = mydb.cursor()
 #creates the salt needed to hash the password
 #NOTE: this is also stored in the users row of data
-SALT = secrets.token_bytes(32)
+salt = bcrypt.gensalt()
 
 def adminSwitch():
     i = None
@@ -60,7 +59,7 @@ def createUser():
     createUserUserID = input("Enter User Unique ID:")
     createUserPassword = input("Enter User Password:")
     #creates the hashed password to store in the database
-    password = hashlib.pbkdf2_hmac('sha256', createUserPassword.encode(), SALT, 4096)
+    password = bcrypt.hashpw(createUserPassword, salt)
     #print("Inserting password: " + password + "\n and program SALT: %s" % (password, SALT))
     id=random.randint(1000, 9999)
     mycursor.execute("""SELECT ID FROM users WHERE ID='%s'""" % id)
@@ -69,7 +68,7 @@ def createUser():
         id=random.randint(1000, 9999)
         mycursor.execute("""SELECT ID FROM users WHERE ID='%s'""" % id)
         myresult = mycursor.fetchall()
-    mycursor.execute("""INSERT INTO users (ID, fName, lName, userID, type, password, salt) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s')""" % (id, createUserfName, createUserlName, createUserUserID, "U", password.hex(), SALT.hex()))
+    mycursor.execute("""INSERT INTO users (ID, fName, lName, userID, type, password) VALUES ('%s', '%s', '%s', '%s', '%s', '%s')""" % (id, createUserfName, createUserlName, createUserUserID, "U", str(password)[2:]))
     mydb.commit()
 
 def assignUser():

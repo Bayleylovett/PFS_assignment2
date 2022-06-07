@@ -11,6 +11,8 @@ mydb = mysql.connector.connect(
   ssl_disabled=True,
 )
 mycursor = mydb.cursor()
+#creates the salt needed to hash the password
+#NOTE: this is also stored in the users row of data
 SALT = secrets.token_bytes(32)
 
 def adminSwitch():
@@ -57,6 +59,7 @@ def createUser():
     createUserlName = input("Enter User Last Name:")
     createUserUserID = input("Enter User Unique ID:")
     createUserPassword = input("Enter User Password:")
+    #creates the hashed password to store in the database
     password = hashlib.pbkdf2_hmac('sha256', createUserPassword.encode(), SALT, 4096)
     id=random.randint(1000, 9999)
     mycursor.execute("""SELECT ID FROM users WHERE ID='%s'""" % id)

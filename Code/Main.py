@@ -30,14 +30,17 @@ def login():
             userID = None
 
         password = input('\nEnter your password:')
+        #gets the stored password and SALT from the users data in the users table
         sqlstmt = "SELECT password, salt FROM users WHERE userID = %s;"
         mycursor.execute(sqlstmt, userID)
         saltAndKey = mycursor.fetchall()
-        SALT = saltAndKey[1]
         hash_User_password_Verify = saltAndKey[0]
+        SALT = saltAndKey[1]
 
+        #uses the stored SALT to generate a hash from the inputted password
         hash_User_password = hashlib.pbkdf2_hmac('sha256', password.encode(), SALT, 4096)
 
+        #compares the stored hashed value to the inputted hash value
         if secrets.compare_digest(hash_User_password, hash_User_password_Verify):
             print("Password is good continuing log in")
         else:

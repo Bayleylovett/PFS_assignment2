@@ -41,8 +41,8 @@ def login():
         #uses the stored SALT to generate a hash from the inputted password
         hash_User_password = hashlib.pbkdf2_hmac('sha256', password.encode(), SALT, 4096)
 
-        hash_User_password_Verify = bytes.fromhex(hash_User_password_Verify)
-        SALT = bytes.fromhex(SALT)
+        hash_User_password_Verify = bytes.fromhex(str(hash_User_password_Verify))
+        SALT = bytes.fromhex(str(SALT))
 
         #compares the stored hashed value to the inputted hash value
         if secrets.compare_digest(hash_User_password, hash_User_password_Verify):

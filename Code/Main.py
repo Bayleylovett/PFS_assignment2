@@ -11,9 +11,9 @@ userType = None
 userID = None
 mydb = mysql.connector.connect(
   host="seitux2.adfa.unsw.edu.au",
-  user="z5317512",
+  user="z5308054",
   password="mysqlpass",
-  database="z5317512",
+  database="z5308054",
   ssl_disabled=True,
 )
 
@@ -35,7 +35,7 @@ def login():
         sqlstmt = "SELECT password FROM users WHERE userID = %s;"
         mycursor.execute("""SELECT password FROM users WHERE userID='%s'""" % userID)
         hash_User_password_Verify = mycursor.fetchone()
-        hash_User_password_Verify = "b'" + hash_User_password_Verify
+        hash_User_password_Verify = hash_User_password_Verify.encode('utf-8')
 
         #compares the stored hashed value to the inputted hash value
         if bcrypt.hashpw(password, hash_User_password_Verify) == hash_User_password_Verify:

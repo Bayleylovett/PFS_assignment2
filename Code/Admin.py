@@ -57,7 +57,7 @@ def createUser():
     createUserfName = input("Enter User First Name:")
     createUserlName = input("Enter User Last Name:")
     createUserUserID = input("Enter User Unique ID:")
-    createUserPassword = "b'" + input("Enter User Password:")
+    createUserPassword = input("Enter User Password:").encode('utf-8')
     #creates the hashed password to store in the database
     password = bcrypt.hashpw(createUserPassword, salt)
     #print("Inserting password: " + password + "\n and program SALT: %s" % (password, SALT))

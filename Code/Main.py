@@ -5,7 +5,7 @@ from Admin import adminSwitch
 
 
 userType = None
-
+userID = None
 mydb = mysql.connector.connect(
   host="seitux2.adfa.unsw.edu.au",
   user="z5317512",
@@ -19,6 +19,7 @@ mycursor = mydb.cursor()
 def login():
     loggedIn = 0
     while(loggedIn == 0):
+        global userID
         try:
             userID = int(input('\nEnter your user identification number:'))
         except:
@@ -44,14 +45,14 @@ def login():
 #Switch statement based on user permissions
 def switch():
     inputVar = None
-    while input != '0':
+    while inputVar != '0':
         inputVar = input('\nIf you would like to quit press 0.\n'
                   'If not hit enter: ')
         if inputVar == '0':
             print('\nGood Bye')
             break
         elif userType == 'U':
-            userSwitch()
+            userSwitch(userID)
         elif userType == 'A':
             adminSwitch()
         else:

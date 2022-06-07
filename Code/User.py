@@ -1,6 +1,7 @@
 import mysql.connector
 from mysql.connector import Error
 import random
+
 mydb = mysql.connector.connect(
   host="seitux2.adfa.unsw.edu.au",
   user="z5317512",
@@ -9,6 +10,7 @@ mydb = mysql.connector.connect(
   ssl_disabled=True,
 )
 mycursor = mydb.cursor()
+
 
 def searchID():
     searchItemID = int(input("Insert the ID of the item you would like to find: "))
@@ -128,13 +130,33 @@ def listWarehouses():
     for x in myresult:
         print("Warehouse ID:",x[0],"Warehouse Name:",x[1],"Warehouse Location:",x[2], x[3],"Warehouse Manager:",x[4], x[5])
 
-def userSwitch():
-    print('\nDo Stuff')
+def userSwitch(userIdentification):
+    i = None
+    while i != '0':
+        i = input('\nWhat would you like to do\n'
+                  '0: Logout\n'
+                  '1: Search for items using an ID\n'
+                  '2: Search for items using Company\n'
+                  '3: Search for item using a Category\n'
+                  '4: Move an item between a warehouse\n'
+                  '5: Delete an item from the database\n'
+                  '6: List all the warehouses\n'
+                  'Please enter your choice: ')
 
-if __name__ == '__main__':
-    # searchID()
-    # searchCompany()
-    # searchCategory()
-    # moveItems("1112")
-    # destroyItems("1112")
-    # listWarehouses()
+        if i == '0':
+            print('\nGood bye')
+        elif i == '1':
+            searchID()
+        elif i == '2':
+            searchCompany()
+        elif i == '3':
+            searchCategory()
+        elif i == '4':
+            moveItems(int(userIdentification))
+        elif i == '5':
+            destroyItems(int(userIdentification))
+        elif i == '6':
+            listWarehouses()
+        else:
+            print('\nIncorrect Input, Try Again')
+

@@ -37,27 +37,24 @@ def login():
         hash_User_password_Verify = mycursor.fetchone()[0]
         #hash_User_password_Verify = "b'" + hash_User_password_Verify + "'"
         hash_User_password_Verify = hash_User_password_Verify.encode('utf-8')
-        print(hash_User_password_Verify)
 
         #compares the stored hashed value to the inputted hash value
         if bcrypt.hashpw(password, hash_User_password_Verify) == hash_User_password_Verify:
             print("Password is good continuing log in")
+            loggedIn = 1
+            mycursor.execute("""SELECT * from users WHERE userID='%s'""" % userID)
+            myresult = mycursor.fetchall()
+            for x in myresult:
+                global userType
+                userType = x[4]
+            if(userType == 'A' or userType == 'U'):
+                loggedIn = 1
+            else:
+                print('\nIncorrect Login')
         else:
             print("Password is incorrect, terminating log in attempt")
 
-        #connect to db
-        #passing the values to the sql statement as variables protects against sql injection
-        sql = "SELECT * FROM users WHERE userID = %s AND password = %s;"
-        val = (userID, password)
-        mycursor.execute(sql, val)
-        myresult = mycursor.fetchall()
-        for x in myresult:
-            global userType
-            userType = x[5]
-        if(userType == 'A' or userType == 'U'):
-            loggedIn = 1
-        else:
-            print('\nIncorrect Login')
+
 
 #Switch statement based on user permissions
 def switch():

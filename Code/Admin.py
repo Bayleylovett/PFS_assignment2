@@ -61,6 +61,7 @@ def createUser():
     createUserPassword = input("Enter User Password:")
     #creates the hashed password to store in the database
     password = hashlib.pbkdf2_hmac('sha256', createUserPassword.encode(), SALT, 4096)
+    #print("Inserting password: " + password + "\n and program SALT: %s" % (password, SALT))
     id=random.randint(1000, 9999)
     mycursor.execute("""SELECT ID FROM users WHERE ID='%s'""" % id)
     myresult = mycursor.fetchall()
@@ -68,7 +69,7 @@ def createUser():
         id=random.randint(1000, 9999)
         mycursor.execute("""SELECT ID FROM users WHERE ID='%s'""" % id)
         myresult = mycursor.fetchall()
-    mycursor.execute("""INSERT INTO users (ID, fName, lName, userID, type, password, salt) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s')""" % (id, createUserfName, createUserlName, createUserUserID, "U", password, SALT))
+    mycursor.execute("""INSERT INTO users (ID, fName, lName, userID, type, password, salt) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s')""" % (id, createUserfName, createUserlName, createUserUserID, "U", (password), (SALT)))
     mydb.commit()
 
 def assignUser():

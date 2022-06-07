@@ -34,8 +34,9 @@ def login():
         sqlstmt = "SELECT password, salt FROM users WHERE userID = %s;"
         mycursor.execute("""SELECT password, salt FROM users WHERE userID='%s'""" % userID)
         saltAndKey = mycursor.fetchall()
-        hash_User_password_Verify = saltAndKey[0]
-        SALT = saltAndKey[1]
+        for x in saltAndKey:
+            hash_User_password_Verify = x[0]
+            SALT = x[1]
 
         #uses the stored SALT to generate a hash from the inputted password
         hash_User_password = hashlib.pbkdf2_hmac('sha256', password.encode(), SALT, 4096)

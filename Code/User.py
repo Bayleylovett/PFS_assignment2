@@ -103,9 +103,30 @@ def moveItems(moveItemsUserID):
             else:
                 print("Quantity to large.")
 
+def destroyItems(destroyItemsUserID):
+    destroyItemsItem = int(input("Insert the ID of the item you would like to delete: "))
+    destroyItemsWarehouse = int(input("Insert the ID of the warehouse you would like to delete items from: "))
+    destroyItemsQuantity = int(input("Insert the quantity of items you would like to delete: "))
+    mycursor.execute("""SELECT DISTINCT b.quantity FROM warehouseManagers a, warehouseStock b WHERE a.mID='%s' AND a.wID='%s' AND b.iID='%s' AND b.wID=a.wID""" % (destroyItemsUserID, destroyItemsWarehouse, destroyItemsItem))
+    myresult = mycursor.fetchall()
+    if mycursor.rowcount==0:
+        print("Invalid inputs or you cannot access this warehouse.")
+    else:
+        for x in myresult:
+            if int(x[0])>destroyItemsQuantity:
+                mycursor.execute("""UPDATE warehouseStock SET quantity='%s' WHERE wID='%s' AND iID='%s'""" % (x[0]-destroyItemsQuantity, destroyItemsWarehouse, destroyItemsItem))
+                mydb.commit()
+            elif int(x[0])==destroyItemsQuantity:
+                mycursor.execute("""DELETE FROM warehouseStock WHERE wID='%s' AND iID='%s'""" % (destroyItemsWarehouse, destroyItemsItem))
+                mydb.commit()
+            else:
+                print("Quantity to large.")
 
-
-# def destroyItems():
+def listWarehouses():
+    mycursor.execute("""SELECT a.ID, a.wName, a.state, a.country, b.fName, b.lName FROM warehouses a, users b, warehouseManagers c WHERE c.wID=a.ID AND b.ID=c.mID""")
+    myresult = mycursor.fetchall()
+    for x in myresult:
+        print("Warehouse ID:",x[0],"Warehouse Name:",x[1],"Warehouse Location:",x[2], x[3],"Warehouse Manager:",x[4], x[5])
 
 def userSwitch():
     print('\nDo Stuff')
@@ -114,4 +135,6 @@ if __name__ == '__main__':
     # searchID()
     # searchCompany()
     # searchCategory()
-    moveItems("1112")
+    # moveItems("1112")
+    # destroyItems("1112")
+    # listWarehouses()

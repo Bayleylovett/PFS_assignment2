@@ -1,6 +1,8 @@
 import mysql.connector
 from mysql.connector import Error
 import random
+import hashlib
+import secrets
 mydb = mysql.connector.connect(
   host="seitux2.adfa.unsw.edu.au",
   user="z5317512",
@@ -9,6 +11,7 @@ mydb = mysql.connector.connect(
   ssl_disabled=True,
 )
 mycursor = mydb.cursor()
+SALT = secrets.token_bytes(32)
 
 def adminSwitch():
     i = None
@@ -53,6 +56,8 @@ def createUser():
     createUserfName = input("Enter User First Name:")
     createUserlName = input("Enter User Last Name:")
     createUserUserID = input("Enter User Unique ID:")
+    createUserPassword = input("Enter User Password:")
+    password = hashlib.pbkdf2_hmac('sha256', createUserPassword.encode(), SALT, 4096)
     id=random.randint(1000, 9999)
     mycursor.execute("""SELECT ID FROM users WHERE ID='%s'""" % id)
     myresult = mycursor.fetchall()
@@ -60,7 +65,7 @@ def createUser():
         id=random.randint(1000, 9999)
         mycursor.execute("""SELECT ID FROM users WHERE ID='%s'""" % id)
         myresult = mycursor.fetchall()
-    mycursor.execute("""INSERT INTO users (ID, fName, lName, userID, password, type) VALUES ('%s', '%s', '%s', '%s', '%s', '%s')""" % (id, createUserfName, createUserlName, createUserUserID, "password", "U"))
+    mycursor.execute("""INSERT INTO users (ID, fName, lName, userID, password, type, salt) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s')""" % (id, createUserfName, createUserlName, createUserUserID, password, "U", SALT))
     mydb.commit()
 
 def assignUser():

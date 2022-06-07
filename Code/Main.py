@@ -1,5 +1,8 @@
+import secrets
 import mysql.connector
 from mysql.connector import Error
+import ast
+import hashlib
 from User import userSwitch
 from Admin import adminSwitch
 
@@ -27,6 +30,18 @@ def login():
             userID = None
 
         password = input('\nEnter your password:')
+        sqlstmt = "SELECT password, salt FROM users WHERE userID = %s;"
+        mycursor.execute(sqlstmt, userID)
+        saltAndKey = mycursor.fetchall()
+        SALT = saltAndKey[1]
+        hash_User_password_Verify = saltAndKey[0]
+
+        hash_User_password = hashlib.pbkdf2_hmac('sha256', password.encode(), SALT, 4096)
+
+        if secrets.compare_digest(hash_User_password, hash_User_password_Verify):
+            print("Password is good continuing log in")
+        else:
+            print("Password is incorrect, terminating log in attempt")
 
         #connect to db
         #passing the values to the sql statement as variables protects against sql injection

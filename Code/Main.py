@@ -30,12 +30,12 @@ def login():
             userID = None
 
         password = input('\nEnter your password:')
-        password = "b'" + password
+        password = password.encode('utf-8')
         #gets the stored password from the users data in the users table
         sqlstmt = "SELECT password FROM users WHERE userID = %s;"
         mycursor.execute("""SELECT password FROM users WHERE userID='%s'""" % userID)
         hash_User_password_Verify = mycursor.fetchone()
-        hash_User_password_Verify = hash_User_password_Verify.encode('utf-8')
+        hash_User_password_Verify = "b'" + hash_User_password_Verify + "'"
 
         #compares the stored hashed value to the inputted hash value
         if bcrypt.hashpw(password, hash_User_password_Verify) == hash_User_password_Verify:

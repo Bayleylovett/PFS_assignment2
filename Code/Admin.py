@@ -60,6 +60,9 @@ def createUser():
     createUserPassword = input("Enter User Password:").encode('utf-8')
     #creates the hashed password to store in the database
     password = bcrypt.hashpw(createUserPassword, salt)
+    password = str(password)
+    password = password[2:]
+    password = password[:-1]
     #print("Inserting password: " + password + "\n and program SALT: %s" % (password, SALT))
     id=random.randint(1000, 9999)
     mycursor.execute("""SELECT ID FROM users WHERE ID='%s'""" % id)
@@ -68,7 +71,7 @@ def createUser():
         id=random.randint(1000, 9999)
         mycursor.execute("""SELECT ID FROM users WHERE ID='%s'""" % id)
         myresult = mycursor.fetchall()
-    mycursor.execute("""INSERT INTO users (ID, fName, lName, userID, type, password) VALUES ('%s', '%s', '%s', '%s', '%s', '%s')""" % (id, createUserfName, createUserlName, createUserUserID, "U", str(password)[2:]))
+    mycursor.execute("""INSERT INTO users (ID, fName, lName, userID, type, password) VALUES ('%s', '%s', '%s', '%s', '%s', '%s')""" % (id, createUserfName, createUserlName, createUserUserID, "U", password))
     mydb.commit()
 
 def assignUser():

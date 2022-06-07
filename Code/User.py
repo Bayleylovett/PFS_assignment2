@@ -125,10 +125,21 @@ def destroyItems(destroyItemsUserID):
                 print("Quantity to large.")
 
 def listWarehouses():
+    mycursor.execute("""SELECT * FROM warehouses""")
+    myresult = mycursor.fetchall()
+    rows=mycursor.rowcount
+    rowsTemp = 0
     mycursor.execute("""SELECT a.ID, a.wName, a.state, a.country, b.fName, b.lName FROM warehouses a, users b, warehouseManagers c WHERE c.wID=a.ID AND b.ID=c.mID""")
     myresult = mycursor.fetchall()
     for x in myresult:
         print("Warehouse ID:",x[0],"Warehouse Name:",x[1],"Warehouse Location:",x[2], x[3],"Warehouse Manager:",x[4], x[5])
+        rowsTemp += 1
+    if (rowsTemp!=rows):
+        print("Warehouses have not all been assigned a Manager, listing all warehouses.")
+        mycursor.execute("""SELECT * FROM warehouses""")
+        myresult = mycursor.fetchall()
+        for x in myresult:
+            print("Warehouse ID:",x[0],"Warehouse Name:",x[1],"Warehouse Location:",x[2], x[3])
 
 def userSwitch(userIdentification):
     i = None
@@ -159,4 +170,3 @@ def userSwitch(userIdentification):
             listWarehouses()
         else:
             print('\nIncorrect Input, Try Again')
-

@@ -28,6 +28,7 @@ def login():
         password = input('\nEnter your password:')
 
         #connect to db
+        #passing the values to the sql statement as variables protects against sql injection
         sql = "SELECT * FROM users WHERE userID = %s AND password = %s;"
         val = (userID, password)
         mycursor.execute(sql, val)

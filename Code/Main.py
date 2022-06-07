@@ -36,6 +36,7 @@ def login():
         mycursor.execute("""SELECT password FROM users WHERE userID='%s'""" % userID)
         hash_User_password_Verify = mycursor.fetchone()[0]
         hash_User_password_Verify = "b'" + hash_User_password_Verify + "'"
+        #hash_User_password_Verify.encode('utf-8')
 
         #compares the stored hashed value to the inputted hash value
         if bcrypt.hashpw(password, hash_User_password_Verify) == hash_User_password_Verify:

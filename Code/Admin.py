@@ -60,9 +60,9 @@ def createUser():
     createUserUserID = input("Enter User Unique ID:")
     createUserPassword = input("Enter User Password:")
     #creates the hashed password to store in the database
+    SALT = str(SALT).replace("'","")
     password = hashlib.pbkdf2_hmac('sha256', createUserPassword.encode(), SALT, 4096)
     password = str(password).replace("'", "")
-    SALT = str(SALT).replace("'","")
     #print("Inserting password: " + password + "\n and program SALT: %s" % (password, SALT))
     id=random.randint(1000, 9999)
     mycursor.execute("""SELECT ID FROM users WHERE ID='%s'""" % id)

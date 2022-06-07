@@ -42,19 +42,21 @@ def login():
 
 #Switch statement based on user permissions
 def switch():
-
-    while userType != '0':
-        if userType == '0':
-               print('\nGood Bye')
+    inputVar = None
+    while input != '0':
+        inputVar = input('\nIf you would like to quit press 0.\n'
+                  'If not hit enter: ')
+        if inputVar == '0':
+            print('\nGood Bye')
+            break
         elif userType == 'U':
-                userSwitch()
+            userSwitch()
         elif userType == 'A':
             adminSwitch()
         else:
             print('\nGood Bye')
             break
-    if userType == '0':
-        print('\nGood Bye')
+
 
 
 if __name__ == '__main__':

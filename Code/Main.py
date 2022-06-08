@@ -24,7 +24,7 @@ def login():
     while(loggedIn == 0):
         global userID
         try:
-            userID = int(input('\nEnter your user identification number:'))
+            userID = int(input('Enter your user identification number:'))
         except:
             print('\nIncorrect Input!')
             userID = None
@@ -48,6 +48,10 @@ def login():
                 global userType
                 userType = x[4]
             if(userType == 'A' or userType == 'U'):
+                mycursor.execute("""SELECT fName, type FROM users WHERE userID='%s'""" % userID)
+                myresult = mycursor.fetchall()
+                for x in myresult:
+                    print("Hi ",x[0]," You are an:",x[1])
                 loggedIn = 1
             else:
                 print('\nIncorrect Login')
@@ -66,7 +70,10 @@ def switch():
             print('\nGood Bye')
             break
         elif userType == 'U':
-            userSwitch(userID)
+            mycursor.execute("""SELECT ID FROM users WHERE userID='%s'""" % userID)
+            myresult = mycursor.fetchall()
+            for x in myresult:
+                userSwitch(x[0])
         elif userType == 'A':
             adminSwitch()
         else:
@@ -76,6 +83,5 @@ def switch():
 
 
 if __name__ == '__main__':
-    print("Hi")
     login()
     switch()

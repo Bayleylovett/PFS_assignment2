@@ -1,7 +1,9 @@
+# Prebuilt functions to import for program
 import mysql.connector
 from mysql.connector import Error
 import random
 import bcrypt
+# database connectin
 mydb = mysql.connector.connect(
   host="seitux2.adfa.unsw.edu.au",
   user="z5317512",
@@ -10,10 +12,10 @@ mydb = mysql.connector.connect(
   ssl_disabled=True,
 )
 mycursor = mydb.cursor()
-#creates the salt needed to hash the password
-#NOTE: this is also stored in the users row of data
+# Generating salt for password hashing
 salt = bcrypt.gensalt()
 
+# Switch statement once admin is logged in to select functions
 def adminSwitch():
     i = None
     while i != '0':
@@ -53,37 +55,45 @@ def adminSwitch():
         else:
             print('\nIncorrect Input, Try Again')
 
+# Creates a new user give user inputs
 def createUser():
+    # Inputs for the new user
     createUserfName = input("Enter User First Name:")
     createUserlName = input("Enter User Last Name:")
     createUserUserID = input("Enter User Unique ID:")
     createUserPassword = input("Enter User Password:").encode('utf-8')
-    #creates the hashed password to store in the database
+    # hashing for password
     password = bcrypt.hashpw(createUserPassword, salt)
     password = str(password)
     password = password[2:]
     password = password[:-1]
-    #print("Inserting password: " + password + "\n and program SALT: %s" % (password, SALT))
     id=random.randint(1000, 9999)
     mycursor.execute("""SELECT ID FROM users WHERE ID='%s'""" % id)
     myresult = mycursor.fetchall()
+    # Error checking to ensure there is not already an ID
     while not mycursor.rowcount==0:
         id=random.randint(1000, 9999)
         mycursor.execute("""SELECT ID FROM users WHERE ID='%s'""" % id)
         myresult = mycursor.fetchall()
+    # Inserting into database
     mycursor.execute("""INSERT INTO users (ID, fName, lName, userID, type, password) VALUES ('%s', '%s', '%s', '%s', '%s', '%s')""" % (id, createUserfName, createUserlName, createUserUserID, "U", password))
     mydb.commit()
 
+# Assigns a user to a warehouse so they can manage stockl
 def assignUser():
+    # User inputs for queries
     assignUserID = input("Enter User ID:")
     assignWarehouseID = input("Enter Warehouse ID:")
+    # Randomly generating certain length ID
     id=random.randint(10000, 99999)
     mycursor.execute("""SELECT ID FROM warehouseManagers WHERE ID='%s'""" % id)
     myresult = mycursor.fetchall()
+    # Error checking to ensure there is not already an ID
     while not mycursor.rowcount==0:
         id=random.randint(10000, 99999)
         mycursor.execute("""SELECT ID FROM warehouseManagers WHERE ID='%s'""" % id)
         myresult = mycursor.fetchall()
+    # Checking user is not already a manager then adding them to the list if they arent
     mycursor.execute("""SELECT * FROM warehouseManagers WHERE mID='%s' AND wID='%s'""" % (assignUserID, assignWarehouseID))
     myresult = mycursor.fetchall()
     for x in myresult:
@@ -92,19 +102,24 @@ def assignUser():
         mycursor.execute("""INSERT INTO warehouseManagers (ID, mID, wID) VALUES ('%s', '%s', '%s')""" % (id, assignUserID, assignWarehouseID))
         mydb.commit()
 
+# Creates a new item in the database
 def createItem():
+    # User inputs
     createItemiName = input("Enter Item Name:")
     createItemCategory = input("Enter Item Category:")
     createItemoLocation = input("Enter Item Location:")
     createItemCompany = input("Enter Item Company:")
     createItemPrice = float(input("Enter Item Price:"))
+    # Randomly generating certain length ID
     id=random.randint(1000000000, 9999999999)
     mycursor.execute("""SELECT ID FROM items WHERE ID='%s'""" % id)
     myresult = mycursor.fetchall()
+    # Error checking to ensure there is not already an ID
     while not mycursor.rowcount==0:
         id=random.randint(1000000000, 9999999999)
         mycursor.execute("""SELECT ID FROM items WHERE ID='%s'""" % id)
         myresult = mycursor.fetchall()
+    # Executing query in database and checking user doesnt already exist
     mycursor.execute("""SELECT * FROM items WHERE iName='%s' AND category='%s'""" % (createItemiName, createItemCategory))
     myresult = mycursor.fetchall()
     for x in myresult:
@@ -113,17 +128,22 @@ def createItem():
         mycursor.execute("""INSERT INTO items (ID, iName, category, oLocation, company, price) VALUES ('%s', '%s', '%s', '%s', '%s', '%s')""" % (id, createItemiName, createItemCategory, createItemoLocation, createItemCompany, createItemPrice))
         mydb.commit()
 
+# Creates a new warehouse
 def createWarehouse():
+    # User inputs
     createWarehousewName = input("Enter Warehouse Name:")
     createWarehouseState = input("Enter Warehouse State:")
     createWarehouseCountry = input("Enter Warehouse Country:")
+    # Randomly generating certain length ID
     id=random.randint(100, 999)
     mycursor.execute("""SELECT ID FROM warehouses WHERE ID='%s'""" % id)
     myresult = mycursor.fetchall()
+    # Error checking to ensure there is not already an ID
     while not mycursor.rowcount==0:
         id=random.randint(100, 999)
         mycursor.execute("""SELECT ID FROM warehouses WHERE ID='%s'""" % id)
         myresult = mycursor.fetchall()
+    # Executing query in database and checking warehouse doesnt already exist
     mycursor.execute("""SELECT * FROM warehouses WHERE wName='%s'""" % createWarehousewName)
     myresult = mycursor.fetchall()
     for x in myresult:
@@ -132,22 +152,26 @@ def createWarehouse():
         mycursor.execute("""INSERT INTO warehouses (ID, wName, state, country) VALUES ('%s', '%s', '%s', '%s')""" % (id, createWarehousewName, createWarehouseState, createWarehouseCountry))
         mydb.commit()
 
+# Adds items to a specific warehouse
 def addStock():
+    # User inputs
     addStockWarehouseID = input("Enter Warehouse ID to add stock:")
     addStockItemID = input("Enter Item ID:")
     addStockQuantity = int(input("Enter Quantity:"))
+    # Randomly generating certain length ID
     id=random.randint(100000, 999999)
     mycursor.execute("""SELECT ID FROM warehouseStock WHERE ID='%s'""" % id)
     myresult = mycursor.fetchall()
+    # Error checking to ensure there is not already an ID
     while not mycursor.rowcount==0:
         id=random.randint(100000, 999999)
         mycursor.execute("""SELECT ID FROM warehouseStock WHERE ID='%s'""" % id)
         myresult = mycursor.fetchall()
+    # Checks if stock exists or not, then writes custom mysql query depending on that
     mycursor.execute("""SELECT * FROM warehouseStock WHERE wID='%s' AND iID='%s'""" % (addStockWarehouseID, addStockItemID))
     myresult = mycursor.fetchall()
     for x in myresult:
         id=id
-
     if mycursor.rowcount>0:
         mycursor.execute("""UPDATE warehouseStock SET quantity='%s' WHERE wID='%s' AND iID='%s'""" % (x[3]+addStockQuantity, addStockWarehouseID, addStockItemID))
         mydb.commit()
@@ -155,13 +179,16 @@ def addStock():
         mycursor.execute("""INSERT INTO warehouseStock (ID, wID, iID, quantity) VALUES ('%s', '%s', '%s', '%s')""" % (id, addStockWarehouseID, addStockItemID, addStockQuantity))
         mydb.commit()
 
+# Lists all current warehouses
 def listWarehouses():
     mycursor.execute("""SELECT * FROM warehouses""")
     myresult = mycursor.fetchall()
     rows=mycursor.rowcount
     rowsTemp = 0
+    # Custom query to format how the result looks to see the manager and the warehouse
     mycursor.execute("""SELECT a.ID, a.wName, a.state, a.country, b.fName, b.lName FROM warehouses a, users b, warehouseManagers c WHERE c.wID=a.ID AND b.ID=c.mID""")
     myresult = mycursor.fetchall()
+    # Error checking to see if all warehouses are listed, if not then it lists them all
     for x in myresult:
         print("Warehouse ID:",x[0],"Warehouse Name:",x[1],"Warehouse Location:",x[2], x[3],"Warehouse Manager:",x[4], x[5])
         rowsTemp += 1
@@ -172,18 +199,21 @@ def listWarehouses():
         for x in myresult:
             print("Warehouse ID:",x[0],"Warehouse Name:",x[1],"Warehouse Location:",x[2], x[3])
 
+# Lists all users
 def listUsers():
     mycursor.execute("""SELECT ID, fName, lName, userID, type FROM users""")
     myresult = mycursor.fetchall()
     for x in myresult:
         print("User ID:",x[0],"User Name:",x[1], x[2],"User Unique ID:",x[3],"User Type:",x[4])
 
+# Lists all items
 def listItems():
     mycursor.execute("""SELECT * FROM items""")
     myresult = mycursor.fetchall()
     for x in myresult:
         print("ID:",x[0],"Name:",x[1],"Category:",x[2],"Location:",x[3],"Company:",x[4],"Price:",x[5])
 
+# Lists all stock and the warehouse its in
 def checkStock():
     mycursor.execute("""SELECT DISTINCT b.iName, b.category, a.quantity, c.wName FROM warehouseStock a, items b, warehouses c WHERE a.wID=c.ID AND a.iID=b.ID""")
     myresult = mycursor.fetchall()
